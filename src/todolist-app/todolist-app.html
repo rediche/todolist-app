@@ -1,0 +1,91 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="todolist-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .card {
+        box-sizing: border-box;
+        background-color: #ffffff;
+        padding: 1rem;
+        width: 300px;
+        margin: 3rem auto;
+        border-radius: .125rem;
+        @apply --shadow-elevation-2dp;
+        @apply --paper-font-body2
+      }
+
+      paper-item {
+        display: flex;
+        justify-content: space-between;
+      }
+    </style>
+    
+    <div class="card">
+      <paper-input label="Add something to this todo list" value="{{ inputValue }}" on-keydown="addTodo"></paper-input>
+
+      <paper-listbox>
+        <template is="dom-repeat" items="{{todos}}">
+            <paper-item>
+              <paper-checkbox checked="{{item.done}}">[[ item.todo ]]</paper-checkbox>
+
+              <paper-icon-button icon="icons:clear" on-click="removeTodo"></paper-icon-button>
+            </paper-item>
+        </template>
+      </paper-listbox>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class TodolistApp extends Polymer.Element {
+      static get is() { return 'todolist-app'; }
+
+      static get properties() {
+        return {
+          inputValue: {
+            type: String,
+            observer: '_inputValueChanged'
+          },
+          todos: {
+            type: Array
+          }
+        };
+      }
+
+      _inputValueChanged(inputValue) {
+        console.log("New value", inputValue);
+      }
+
+      addTodo(e) {
+        if (e.keyCode == 13 && this.inputValue) {
+          this.push('todos', { todo: this.inputValue, done: false });
+          this.set('inputValue', '');
+        }
+      }
+
+      removeTodo(e) {
+        var index = this.todos.indexOf(e.model.item);
+        this.splice('todos', index, 1);
+      }
+    }
+
+    window.customElements.define(TodolistApp.is, TodolistApp);
+  </script>
+</dom-module>
